@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="boardMapper">
+	<select id = "selectTotalCnt" resultType="int">
+	select count(*) from board
+	</select>
+
+  <select id="selectList"  parameterType="hashmap" resultType="kr.co.keangnamit.board.model.BoardDo">
+   select a.SEQNO, a.GROUPSEQ, a.GROUPDEP, a.CASE, a.TITLE, a.CONTENTS, a.REALFILE, a.SAVEFILE, a.USERID, a.INSERTDT, a.UPDATEDT, a.IPADDRESS
+                            from
+                            (SELECT rownum rn , SEQNO, GROUPSEQ, GROUPDEP, CASE, TITLE,
+                            CONTENTS, REALFILE, SAVEFILE, USERID, INSERTDT, UPDATEDT, IPADDRESS
+                            FROM BOARD order by seqno desc ) a
+                            WHERE a.rn between #{first} and #{end} 
+  </select>
+  
+  <select id="selectSearchTotalCnt" parameterType="hashmap" resultType="int">
+  select count(*) from board
+  <if test='type != null and type == "A"'>
+  where TITLE like '%${words}%'
+  </if>
+    <if test='type != null and type == "B"'>
+  where USERID like '%${words}%'
+  </if>
+      <if test='type != null and type == "C"'>
+  where CONTENTS like '%${words}%'
+  </if>
+      <if test='type != null and type == "D"'>
+  where USERID like '%${words}%' or TITLE like '%${words}%' or  CONTENTS like '%${words}%'
+  </if>
+  </select>
+    <select id="selectFindList"  parameterType="hashmap" resultType="kr.co.keangnamit.board.model.BoardDo">
+  <if test='type != null and type == "A"'>
+   select a.SEQNO, a.GROUPSEQ, a.GROUPDEP, a.CASE, a.TITLE, a.CONTENTS, a.REALFILE, a.SAVEFILE, a.USERID, a.INSERTDT, a.UPDATEDT, a.IPADDRESS
+                            from
+	                            (SELECT rownum rn , SEQNO, GROUPSEQ, GROUPDEP, CASE, TITLE,
+	                            CONTENTS, REALFILE, SAVEFILE, USERID, INSERTDT, UPDATEDT, IPADDRESS
+	                            FROM BOARD 
+	                            where title like '%${words}%'
+	                            order by seqno desc ) a
+                            WHERE a.rn between #{first} and #{end}
+</if>
+<if test='type != null and type == "B"'>
+   select a.SEQNO, a.GROUPSEQ, a.GROUPDEP, a.CASE, a.TITLE, a.CONTENTS, a.REALFILE, a.SAVEFILE, a.USERID, a.INSERTDT, a.UPDATEDT, a.IPADDRESS
+                            from
+	                            (SELECT rownum rn , SEQNO, GROUPSEQ, GROUPDEP, CASE, TITLE,
+	                            CONTENTS, REALFILE, SAVEFILE, USERID, INSERTDT, UPDATEDT, IPADDRESS
+	                            FROM BOARD 
+	                            where userid like '%${words}%'
+	                            order by seqno desc ) a
+                            WHERE a.rn between #{first} and #{end}
+</if>                                          
+<if test='type != null and type == "C"'>
+   select a.SEQNO, a.GROUPSEQ, a.GROUPDEP, a.CASE, a.TITLE, a.CONTENTS, a.REALFILE, a.SAVEFILE, a.USERID, a.INSERTDT, a.UPDATEDT, a.IPADDRESS
+                            from
+	                            (SELECT rownum rn , SEQNO, GROUPSEQ, GROUPDEP, CASE, TITLE,
+	                            CONTENTS, REALFILE, SAVEFILE, USERID, INSERTDT, UPDATEDT, IPADDRESS
+	                            FROM BOARD 
+	                            where CONTENTS like '%${words}%'
+	                            order by seqno desc ) a
+                            WHERE a.rn between #{first} and #{end}
+</if>                                       
+
+  <if test='type != null and type == "D"'>
+   select a.SEQNO, a.GROUPSEQ, a.GROUPDEP, a.CASE, a.TITLE, a.CONTENTS, a.REALFILE, a.SAVEFILE, a.USERID, a.INSERTDT, a.UPDATEDT, a.IPADDRESS
+                            from
+	                            (SELECT rownum rn , SEQNO, GROUPSEQ, GROUPDEP, CASE, TITLE,
+	                            CONTENTS, REALFILE, SAVEFILE, USERID, INSERTDT, UPDATEDT, IPADDRESS
+	                            FROM BOARD 
+	                            where USERID like '%${words}%' or TITLE like '%${words}%' or  CONTENTS like '%${words}%'
+	                            order by seqno desc ) a
+                            WHERE a.rn between #{first} and #{end}
+</if>                                       
+  </select>
+    <select id="selectView"  parameterType="int" resultType="kr.co.keangnamit.board.model.BoardDo">
+SELECT SEQNO, GROUPSEQ, GROUPDEP, CASE, TITLE, CONTENTS, REALFILE, SAVEFILE, USERID, INSERTDT, UPDATEDT, IPADDRESS , RECOMMENDNO
+							FROM BOARD where seqno = #{seqnum}
+  </select>
+  
+  <select id = "selectRecomm" parameterType="int" resultType="int">
+  SELECT NVL(RECOMMENDNO, 0) FROM BOARD WHERE SEQNO = #{seqnum}
+  </select>
+  <update id="updateRecomm" parameterType="int">
+  UPDATE BOARD SET RECOMMENDNO = nvl(RECOMMENDNO,0) + 1 WHERE SEQNO = #{seqnum}
+  </update>
+</mapper>
