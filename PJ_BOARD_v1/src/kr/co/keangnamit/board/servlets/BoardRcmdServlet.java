@@ -52,7 +52,7 @@ public class BoardRcmdServlet extends HttpServlet {
 			obj.put("3","33333");
 			String outObj = obj.toString();
 						
-			System.out.println(obj.toJSONString());
+			//System.out.println(obj.toJSONString());
 			
 
 			
